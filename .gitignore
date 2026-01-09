@@ -1,0 +1,22 @@
+# Virtual environments
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# dbt artifacts
+target/
+dbt_packages/
+logs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env

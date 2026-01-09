@@ -1,0 +1,8 @@
+mophones:
+  outputs:
+    dev:
+      type: duckdb
+      path: '../../duckdb/mophones.duckdb'
+      threads: 4
+
+  target: dev

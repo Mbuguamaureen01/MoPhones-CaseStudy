@@ -1,0 +1,73 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Raw data loaded from CSV and Excel files into DuckDB"
+    schema: main
+    tables:
+      - name: credit_data_20250101
+        description: "Credit portfolio snapshot as of January 1, 2025"
+      - name: credit_data_20250330
+        description: "Credit portfolio snapshot as of March 30, 2025"
+      - name: credit_data_20250630
+        description: "Credit portfolio snapshot as of June 30, 2025"
+      - name: credit_data_20250930
+        description: "Credit portfolio snapshot as of September 30, 2025"
+      - name: credit_data_20251230
+        description: "Credit portfolio snapshot as of December 30, 2025"
+      - name: customer_sales
+        description: "Customer sales transactions"
+      - name: customer_dob
+        description: "Customer date of birth data"
+      - name: customer_gender
+        description: "Customer gender and citizenship data"
+      - name: customer_income
+        description: "Customer income data"
+      - name: nps_data
+        description: "Customer satisfaction (NPS) survey responses"
+
+models:
+  - name: stg_credit_snapshots
+    description: "All credit portfolio snapshots unioned together with standardized columns"
+    columns:
+      - name: loan_id
+        description: "Unique identifier for each loan"
+        tests:
+          - not_null
+      - name: snapshot_date
+        description: "Date of the portfolio snapshot"
+        tests:
+          - not_null
+      - name: balance
+        description: "Outstanding loan balance"
+      - name: days_past_due
+        description: "Number of days the loan is overdue"
+
+  - name: stg_customers
+    description: "Cleaned customer and sales data"
+    columns:
+      - name: loan_id
+        description: "Unique identifier linking to credit data"
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_nps
+    description: "Cleaned NPS survey responses"
+    columns:
+      - name: loan_id
+        description: "Unique identifier linking to customer data"
+        tests:
+          - not_null
+      - name: nps_score
+        description: "NPS score from 0-10"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+      - name: nps_category
+        description: "NPS category (Promoter, Passive, Detractor)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Promoter', 'Passive', 'Detractor']

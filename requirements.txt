@@ -1,0 +1,10 @@
+duckdb
+dbt-duckdb
+pandas
+numpy
+matplotlib
+seaborn
+jupyter
+ipykernel
+plotly
+openpyxl
