@@ -20,13 +20,13 @@ gender_data as (
     select
         "Loan Id" as loan_id,
 
-        -- Standardize citizenship: KENYAN, CITIZEN, Kenyan → "Kenyan"
+        -- Standardize citizenship: KENYAN, CITIZEN, Kenyan to "Kenyan"
         case
             when upper(trim(citizenship)) in ('KENYAN', 'CITIZEN') then 'Kenyan'
             else citizenship
         end as citizenship,
 
-        -- Standardize gender: M, Male, MALE → "Male"; F, Female, FEMALE → "Female"
+        -- Standardize gender: M, Male, MALE → "Male"; F, Female, FEMALE to "Female"
         case
             when upper(trim(gender)) in ('M', 'MALE') then 'Male'
             when upper(trim(gender)) in ('F', 'FEMALE') then 'Female'

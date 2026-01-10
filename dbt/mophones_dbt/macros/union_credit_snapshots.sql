@@ -1,7 +1,7 @@
 {% macro union_credit_snapshots() %}
     {#
         This macro dynamically unions all credit_data_* tables
-        New quarters are automatically detected - no code changes needed!
+        New quarters are automatically detected
     #}
 
     {% set get_credit_tables_query %}
