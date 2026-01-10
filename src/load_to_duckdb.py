@@ -29,6 +29,15 @@ DB_PATH = "duckdb/mophones.duckdb"
 # Connect to DuckDB
 con = duckdb.connect(DB_PATH)
 
+def table_exists(table_name):
+    """Check if a table exists in DuckDB"""
+    result = con.execute("""
+        SELECT COUNT(*)
+        FROM information_schema.tables
+        WHERE table_name = ?
+    """, [table_name]).fetchone()
+    return result[0] > 0
+
 print("Loading data into DuckDB...")
 
 # Load CSV files - Credit Data snapshots
@@ -40,6 +49,10 @@ for file in DATA_DIR.glob("Credit Data - *.csv"):
         table_name = f"credit_data_{yyyy}{mm}{dd}"
     else:
         table_name = file.stem.lower().replace(" ", "_").replace("-", "_")
+
+    if table_exists(table_name):
+        print(f" [SKIP] Table `{table_name}` already exists, skipping {file.name}")
+        continue
 
     df = pd.read_csv(file)
 
@@ -62,6 +75,10 @@ if customer_file.exists():
     }
 
     for sheet_name, table_name in sheet_mapping.items():
+        if table_exists(table_name):
+            print(f"  [SKIP] Table `{table_name}` already exists, skipping sheet '{sheet_name}'")
+            continue
+
         df = pd.read_excel(customer_file, sheet_name=sheet_name)
 
         con.execute(f"""
@@ -77,15 +94,18 @@ else:
 print("\n3. Loading NPS Data from Excel...")
 nps_file = DATA_DIR / "NPS Data.xlsx"
 if nps_file.exists():
-    df_nps = pd.read_excel(nps_file, sheet_name=0)
+    if table_exists('nps_data'):
+        print(f"  [SKIP] Table `nps_data` already exists, skipping {nps_file.name}")
+    else:
+        df_nps = pd.read_excel(nps_file, sheet_name=0)
 
-    con.execute("""
-        CREATE OR REPLACE TABLE nps_data AS
-        SELECT * FROM df_nps
-    """)
+        con.execute("""
+            CREATE OR REPLACE TABLE nps_data AS
+            SELECT * FROM df_nps
+        """)
 
-    print(
-        f"  [OK] Loaded {nps_file.name} -> table `nps_data` ({len(df_nps)} rows)")
+        print(
+            f"  [OK] Loaded {nps_file.name} -> table `nps_data` ({len(df_nps)} rows)")
 else:
     print(f"  [WARN] {nps_file.name} not found")
 
