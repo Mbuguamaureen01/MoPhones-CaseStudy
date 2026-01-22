@@ -87,7 +87,7 @@ This creates:
 
 #### 4. Run Analysis
 
-Open and run [notebooks/mophones_analysis_with_demographics.ipynb](notebooks/mophones_analysis_with_demographics.ipynb)
+Open and run [notebooks/mophones_analysis.ipynb](notebooks/mophones_analysis.ipynb)
 
 ## Data Model
 
